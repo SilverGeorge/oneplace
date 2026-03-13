@@ -10,7 +10,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/cn";
 
 const schema = z.object({
-  entryCategory: z.string().min(1, "Select category"),
   businessName: z.string().min(2, "Business name is required"),
   category: z.string().min(1, "Select category"),
   subCategory: z.string().min(1, "Select subcategory"),
@@ -25,8 +24,6 @@ const schema = z.object({
     .string()
     .min(20, "Description must be at least 20 characters")
     .max(500, "Description max is 500"),
-  brandingState: z.string().min(1, "State is required"),
-  brandingCity: z.string().min(1, "City is required"),
   facebook: z.string().url("Enter a valid URL").or(z.literal("")),
   twitter: z.string().url("Enter a valid URL").or(z.literal("")),
   instagram: z.string().url("Enter a valid URL").or(z.literal("")),
@@ -119,7 +116,6 @@ const planPriceMap: Record<"free" | "pro" | "premium", string> = {
 };
 
 const defaultValues: FormValues = {
-  entryCategory: "",
   businessName: "",
   category: "",
   subCategory: "",
@@ -131,8 +127,6 @@ const defaultValues: FormValues = {
   logoPreview: "",
   bannerPreview: "",
   brandingDescription: "",
-  brandingState: "",
-  brandingCity: "",
   facebook: "",
   twitter: "",
   instagram: "",
@@ -183,10 +177,6 @@ export default function CreateStorefrontAccountPage() {
     [values.category]
   );
   const selectedCities = useMemo(() => citiesByState[values.state ?? ""] ?? [], [values.state]);
-  const brandingCities = useMemo(
-    () => citiesByState[values.brandingState ?? ""] ?? [],
-    [values.brandingState]
-  );
   const currentPlan = values.plan ?? "free";
   const canContinueFromCurrentStep = useMemo(() => {
     if (step === 0) {
@@ -207,8 +197,6 @@ export default function CreateStorefrontAccountPage() {
       return Boolean(
         values.logoPreview &&
           values.bannerPreview &&
-          values.brandingState &&
-          values.brandingCity &&
           descriptionLength >= 20 &&
           descriptionLength <= 500 &&
           !uploadErrors.logo &&
@@ -263,8 +251,6 @@ export default function CreateStorefrontAccountPage() {
         "logoPreview",
         "bannerPreview",
         "brandingDescription",
-        "brandingState",
-        "brandingCity",
         "facebook",
         "twitter",
         "instagram",
@@ -367,7 +353,7 @@ export default function CreateStorefrontAccountPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(getValues())
     });
-    const json = (await response.json()) as { success: boolean; data?: { redirectUrl?: string } };
+    const json = (await response.json()) as { success: boolean };
     setIsSubmitting(false);
 
     if (json.success) {
@@ -375,7 +361,7 @@ export default function CreateStorefrontAccountPage() {
       localStorage.removeItem(DRAFT_KEY);
       sessionStorage.removeItem(SESSION_KEY);
       setTimeout(() => {
-        router.push(json.data?.redirectUrl ?? "/dashboard");
+        router.push("/dashboard");
       }, 1200);
       return;
     }
@@ -399,29 +385,6 @@ export default function CreateStorefrontAccountPage() {
         </header>
 
         <h1 className="text-[32px] font-bold text-[#008080]">Sign up</h1>
-
-        <div className="mt-4 rounded-xl border border-[#e0e0e0] bg-white p-4">
-          <label className="mb-1 block text-sm font-semibold text-[#1a1a1a]">
-            Select Category <span className="text-[#e74c3c]">*</span>
-          </label>
-          <select
-            {...register("entryCategory")}
-            className={cn(
-              "w-full rounded-lg border bg-white px-4 py-3 text-base transition duration-200 hover:shadow-sm focus:scale-[1.01] focus:outline-none",
-              errors.entryCategory ? "border-[#e74c3c]" : "border-[#e0e0e0] focus:border-[#008080]"
-            )}
-          >
-            <option value="">Select Category</option>
-            {categories.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
-          {errors.entryCategory ? (
-            <p className="mt-1 text-xs text-[#e74c3c]">{errors.entryCategory.message}</p>
-          ) : null}
-        </div>
 
         <div className="mt-5 rounded-xl border border-[#e0e0e0] bg-white p-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -585,29 +548,6 @@ export default function CreateStorefrontAccountPage() {
               </Field>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <Field label="State" required error={errors.brandingState?.message}>
-                  <select {...register("brandingState")} className={inputClass(Boolean(errors.brandingState))}>
-                    <option value="">Select State</option>
-                    {states.map((state) => (
-                      <option key={state} value={state}>
-                        {state}
-                      </option>
-                    ))}
-                  </select>
-                </Field>
-                <Field label="City" required error={errors.brandingCity?.message}>
-                  <select {...register("brandingCity")} className={inputClass(Boolean(errors.brandingCity))}>
-                    <option value="">Select City</option>
-                    {brandingCities.map((city: string) => (
-                      <option key={city} value={city}>
-                        {city}
-                      </option>
-                    ))}
-                  </select>
-                </Field>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
                 <Field label="Facebook URL" error={errors.facebook?.message}>
                   <input {...register("facebook")} placeholder="https://facebook.com/..." className={inputClass(Boolean(errors.facebook))} />
                 </Field>
@@ -678,10 +618,6 @@ export default function CreateStorefrontAccountPage() {
                   <PreviewCard label="Banner" src={values.bannerPreview ?? ""} />
                 </div>
                 <ReviewItem label="Description" value={values.brandingDescription ?? ""} />
-                <ReviewItem
-                  label="Branding Location"
-                  value={`${values.brandingState ?? ""}, ${values.brandingCity ?? ""}`}
-                />
                 <ReviewItem label="Facebook" value={values.facebook || "N/A"} />
                 <ReviewItem label="Twitter/X" value={values.twitter || "N/A"} />
                 <ReviewItem label="Instagram" value={values.instagram || "N/A"} />
