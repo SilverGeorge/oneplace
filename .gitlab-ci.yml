@@ -1,0 +1,40 @@
+image: node:20
+
+stages:
+  - verify
+  - build
+
+variables:
+  NEXT_TELEMETRY_DISABLED: "1"
+  NPM_CONFIG_FUND: "false"
+  NPM_CONFIG_AUDIT: "false"
+
+cache:
+  key:
+    files:
+      - package-lock.json
+  paths:
+    - .npm/
+
+before_script:
+  - npm ci --cache .npm --prefer-offline
+
+lint:
+  stage: verify
+  script:
+    - npm run lint
+
+typecheck:
+  stage: verify
+  script:
+    - npm run typecheck
+
+test:
+  stage: verify
+  script:
+    - npm run test -- --ci
+
+build:
+  stage: build
+  script:
+    - npm run build
