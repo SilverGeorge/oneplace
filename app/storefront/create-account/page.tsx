@@ -81,7 +81,7 @@ const stepDefinitions = [
   {
     id: 3,
     title: "Review and Submit",
-    substeps: ["Preview Store Details", "Click Submit"]
+    substeps: ["Preview Store Details", "Submit"]
   }
 ] as const;
 
