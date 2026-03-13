@@ -154,6 +154,7 @@ export default function CreateStorefrontAccountPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formBannerError, setFormBannerError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
   const [shake, setShake] = useState(false);
   const [uploadErrors, setUploadErrors] = useState<{ logo?: string; banner?: string }>({});
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -348,25 +349,39 @@ export default function CreateStorefrontAccountPage() {
 
     setFormBannerError("");
     setIsSubmitting(true);
-    const response = await fetch("/api/storefront/create", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(getValues())
-    });
-    const json = (await response.json()) as { success: boolean };
-    setIsSubmitting(false);
 
-    if (json.success) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 12000);
+
+      const response = await fetch("/api/storefront/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(getValues()),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        setFormBannerError("Could not submit right now. Please try again.");
+        return;
+      }
+
+      const json = (await response.json()) as { success: boolean };
+      if (!json.success) {
+        setFormBannerError("Could not submit right now. Please try again.");
+        return;
+      }
+
       setSuccessMessage("🎉 Your storefront is ready!");
+      setSuccessModalOpen(true);
       localStorage.removeItem(DRAFT_KEY);
       sessionStorage.removeItem(SESSION_KEY);
-      setTimeout(() => {
-        router.push("/dashboard");
-      }, 1200);
-      return;
+    } catch {
+      setFormBannerError("Request timed out or failed. Please check your network and try again.");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    setFormBannerError("Something went wrong. Please try again.");
   }
 
   return (
@@ -673,7 +688,7 @@ export default function CreateStorefrontAccountPage() {
                   type="button"
                   onClick={() => void submitAll()}
                   disabled={isSubmitting}
-                  className="inline-flex items-center justify-center rounded-lg bg-[#27ae60] px-10 py-3 text-base font-semibold text-white transition duration-200 hover:scale-[1.02] hover:bg-[#229954] disabled:opacity-50"
+                  className="inline-flex items-center justify-center rounded-lg bg-[#008080] px-10 py-3 text-base font-semibold text-white transition duration-200 hover:scale-[1.02] hover:bg-[#0a6d6d] disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <>
@@ -681,7 +696,7 @@ export default function CreateStorefrontAccountPage() {
                       Submitting...
                     </>
                   ) : (
-                    "Click Submit"
+                    "Submit"
                   )}
                 </button>
               )}
@@ -694,6 +709,31 @@ export default function CreateStorefrontAccountPage() {
             </div>
           ) : null}
         </section>
+
+        {successModalOpen ? (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+            <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-2xl">
+              <h3 className="text-xl font-bold text-[#1a1a1a]">Success</h3>
+              <p className="mt-2 text-sm text-[#666]">{successMessage || "Your storefront has been created."}</p>
+              <div className="mt-5 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSuccessModalOpen(false)}
+                  className="rounded-lg border border-[#e0e0e0] px-4 py-2 text-sm font-semibold text-[#666] transition hover:bg-[#f5f5f5]"
+                >
+                  Close
+                </button>
+                <button
+                  type="button"
+                  onClick={() => router.push("/dashboard")}
+                  className="rounded-lg bg-[#008080] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#0a6d6d]"
+                >
+                  Visit Dashboard
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
     </main>
   );
