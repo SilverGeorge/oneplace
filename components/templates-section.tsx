@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { MdCheck } from "react-icons/md";
 import { cn } from "@/lib/cn";
 
 type Template = {
@@ -115,28 +116,30 @@ export default function TemplatesSection() {
   return (
     <section className="animate-form-fade bg-[#f1f1f1] py-12 sm:py-14 lg:py-16">
       <div className="container-main">
-        <h2 className="text-center text-[40px] font-bold text-[#1a1a1a]">Choose Your Storefront Template</h2>
+        <h2 className="text-center text-[40px] font-bold text-[#1a1a1a]">
+          Choose Your Storefront Template
+        </h2>
         <p className="mx-auto mt-3 max-w-2xl text-center text-[18px] font-normal text-[#666666]">
           Select a template and customize it to match your brand
         </p>
 
         <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
-        {(["ALL", "FREE", "PREMIUM", "POPULAR"] as const).map((filter) => (
-          <button
-            key={filter}
-            type="button"
-            onClick={() => setBadgeFilter(filter)}
-            className={cn(
-              "rounded-full border border-[#e0e0e0] px-4 py-2 text-xs font-semibold transition duration-300",
-              badgeFilter === filter
-                ? "bg-[#008080] text-white"
-                : "bg-white text-slate-700 hover:scale-[1.02] hover:border-[#008080] hover:text-[#008080]"
-            )}
-          >
-            {filter}
-          </button>
-        ))}
-        {/* Commented out the "all industries" section
+          {(["ALL", "FREE", "PREMIUM", "POPULAR"] as const).map((filter) => (
+            <button
+              key={filter}
+              type="button"
+              onClick={() => setBadgeFilter(filter)}
+              className={cn(
+                "rounded-full border border-[#e0e0e0] px-4 py-2 text-xs font-semibold transition duration-300",
+                badgeFilter === filter
+                  ? "bg-[#008080] text-white"
+                  : "bg-white text-slate-700 hover:scale-[1.02] hover:border-[#008080] hover:text-[#008080]"
+              )}
+            >
+              {filter}
+            </button>
+          ))}
+          {/* Commented out the "all industries" section
         <select
           value={categoryFilter}
           onChange={(event) => setCategoryFilter(event.target.value as "ALL" | Template["category"])}
@@ -152,87 +155,90 @@ export default function TemplatesSection() {
         </select>
         */}
         </div>
-        
 
         <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filteredTemplates.map((template) => (
-          <article
-            key={template.id}
-            className="group overflow-hidden rounded-2xl border border-[#e0e0e0] bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-2 hover:shadow-[0_12px_24px_rgba(0,0,0,0.15)]"
-          >
-            <div className="relative h-[220px] w-full bg-[#f0f0f0] lg:h-[280px]">
-              {imageErrors[template.id] ? (
-                <div className="flex h-full w-full items-center justify-center text-sm text-slate-500">
-                  Template Preview
-                </div>
-              ) : (
-                <Image
-                  src={template.image}
-                  alt={template.name}
-                  fill
-                  unoptimized
-                  className="object-cover transition duration-300 group-hover:scale-[1.03]"
-                  onError={() => setImageErrors((prev) => ({ ...prev, [template.id]: true }))}
-                />
-              )}
-
-              <span
-                className={cn(
-                  "absolute right-4 top-4 rounded-full px-4 py-2 text-[12px] font-bold text-white animate-pulse",
-                  badgeStyle(template.badge)
+          {filteredTemplates.map((template) => (
+            <article
+              key={template.id}
+              className="group overflow-hidden rounded-2xl border border-[#e0e0e0] bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-2 hover:shadow-[0_12px_24px_rgba(0,0,0,0.15)]"
+            >
+              <div className="relative h-[220px] w-full bg-[#f0f0f0] lg:h-[280px]">
+                {imageErrors[template.id] ? (
+                  <div className="flex h-full w-full items-center justify-center text-sm text-slate-500">
+                    Template Preview
+                  </div>
+                ) : (
+                  <Image
+                    src={template.image}
+                    alt={template.name}
+                    fill
+                    unoptimized
+                    className="object-cover transition duration-300 group-hover:scale-[1.03]"
+                    onError={() => setImageErrors((prev) => ({ ...prev, [template.id]: true }))}
+                  />
                 )}
-              >
-                {template.badge}
-              </span>
-            </div>
 
-            <div className="p-6">
-              <h3 className="text-[18px] font-bold text-[#1a1a1a]">{template.name}</h3>
-              <p className="mt-3 overflow-hidden text-[14px] font-normal text-[#666666] [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">
-                {template.description}
-              </p>
-
-              <p className="mt-3 text-xs text-slate-600">
-                ★ {template.rating.toFixed(1)} / 5.0 • {(template.users / 1000).toFixed(1)}k+ stores using this template
-              </p>
-
-              <ul className="mt-4 space-y-2">
-                {template.features.slice(0, 4).map((feature) => (
-                  <li key={feature} className="flex items-center gap-2 text-[12px] font-normal text-[#1a1a1a]">
-                    <span className="inline-flex h-4 w-4 items-center justify-center text-[14px] text-[#008080]">
-                      ✓
-                    </span>
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="mt-5 space-y-3">
-                <button
-                  type="button"
-                  onClick={() => handleUseTemplate(template)}
-                  className="w-full rounded-lg bg-[#008080] px-6 py-3 text-[14px] font-semibold text-white transition duration-300 hover:scale-[1.02] hover:bg-[#0a6d6d]"
+                <span
+                  className={cn(
+                    "absolute right-4 top-4 animate-pulse rounded-full px-4 py-2 text-[12px] font-bold text-white",
+                    badgeStyle(template.badge)
+                  )}
                 >
-                  Use This Template
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPreviewTemplate(template)}
-                  className="w-full rounded-lg border border-[#008080] bg-transparent px-6 py-3 text-[14px] font-semibold text-[#008080] transition duration-300 hover:bg-[#f0fffe]"
-                >
-                  Preview
-                </button>
-                <button
-                  type="button"
-                  onClick={() => router.push("/storefront/create-account")}
-                  className="w-full text-[13px] font-semibold text-[#008080] transition duration-300 hover:underline"
-                >
-                  Skip this step and choose later
-                </button>
+                  {template.badge}
+                </span>
               </div>
-            </div>
-          </article>
-        ))}
+
+              <div className="p-6">
+                <h3 className="text-[18px] font-bold text-[#1a1a1a]">{template.name}</h3>
+                <p className="mt-3 overflow-hidden text-[14px] font-normal text-[#666666] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] [display:-webkit-box]">
+                  {template.description}
+                </p>
+
+                <p className="mt-3 text-xs text-slate-600">
+                  ★ {template.rating.toFixed(1)} / 5.0 • {(template.users / 1000).toFixed(1)}k+
+                  stores using this template
+                </p>
+
+                <ul className="mt-4 space-y-2">
+                  {template.features.slice(0, 4).map((feature) => (
+                    <li
+                      key={feature}
+                      className="flex items-center gap-2 text-[12px] font-normal text-[#1a1a1a]"
+                    >
+                      <span className="inline-flex h-4 w-4 items-center justify-center text-[#008080]">
+                        <MdCheck size={16} />
+                      </span>
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-5 space-y-3">
+                  <button
+                    type="button"
+                    onClick={() => handleUseTemplate(template)}
+                    className="w-full rounded-lg bg-[#008080] px-6 py-3 text-[14px] font-semibold text-white transition duration-300 hover:scale-[1.02] hover:bg-[#0a6d6d]"
+                  >
+                    Use Template
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewTemplate(template)}
+                    className="w-full rounded-lg border border-[#008080] bg-transparent px-6 py-3 text-[14px] font-semibold text-[#008080] transition duration-300 hover:bg-[#f0fffe]"
+                  >
+                    Preview
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => router.push("/storefront/create-account")}
+                    className="w-full text-[13px] font-semibold text-[#008080] transition duration-300 hover:underline"
+                  >
+                    Skip this step and choose later
+                  </button>
+                </div>
+              </div>
+            </article>
+          ))}
         </div>
 
         {/* Commented out the "Can't decide?" section
@@ -291,7 +297,12 @@ export default function TemplatesSection() {
                     fill
                     className="object-cover"
                     unoptimized
-                    onError={() => setImageErrors((prev) => ({ ...prev, [`preview-${previewTemplate.id}`]: true }))}
+                    onError={() =>
+                      setImageErrors((prev) => ({
+                        ...prev,
+                        [`preview-${previewTemplate.id}`]: true
+                      }))
+                    }
                   />
                 )}
               </div>
@@ -300,7 +311,7 @@ export default function TemplatesSection() {
                 onClick={() => handleUseTemplate(previewTemplate)}
                 className="mt-4 w-full rounded-lg bg-[#008080] px-6 py-3 text-[14px] font-semibold text-white transition duration-300 hover:scale-[1.02] hover:bg-[#0a6d6d]"
               >
-                Use This Template
+                Use Template
               </button>
             </div>
           </div>

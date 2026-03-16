@@ -1,15 +1,16 @@
 import Link from "next/link";
 
 const sectionNameMap: Record<string, string> = {
-  ecommerce: "E-Commerce",
-  analytics: "Analytics",
-  crm: "CRM",
-  orders: "Orders",
-  sellers: "Seller List",
-  customers: "Customers",
+  store: "Store",
   products: "Products",
-  invoices: "Invoices",
-  auth: "Authentication",
+  orders: "Orders",
+  customers: "Customers",
+  webstore: "Webstore",
+  notifications: "Notifications",
+  invoicing: "Invoicing",
+  template: "Template",
+  templates: "Templates",
+  subscription: "Subscription",
   help: "Help",
   settings: "Settings"
 };
