@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
 import {
   MdAdd,
@@ -22,6 +22,7 @@ import {
 } from "react-icons/md";
 import { cn } from "@/lib/cn";
 import { SidebarMenu, withPreviewParam } from "@/components/dashboard/SidebarMenu";
+import { usePreviewMode } from "@/hooks/use-preview-mode";
 
 type Tab = "overview" | "design" | "pages" | "navigation" | "domains" | "settings";
 
@@ -77,8 +78,7 @@ const presets = [
 
 export default function WebstorePage() {
   const pathname = usePathname() ?? "/dashboard/webstore";
-  const searchParams = useSearchParams();
-  const isPreviewMode = searchParams?.get("preview") === "1";
+  const isPreviewMode = usePreviewMode();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [tab, setTab] = useState<Tab>("overview");
   const [toast, setToast] = useState<{ type: "success" | "error"; text: string } | null>(null);

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
 import {
   MdCheckCircle,
@@ -13,6 +13,7 @@ import {
 } from "react-icons/md";
 import { cn } from "@/lib/cn";
 import { SidebarMenu, withPreviewParam } from "@/components/dashboard/SidebarMenu";
+import { usePreviewMode } from "@/hooks/use-preview-mode";
 
 type TemplateTab = "all" | "mine" | "recent";
 type TemplateItem = {
@@ -78,8 +79,7 @@ const templateItems: TemplateItem[] = [
 
 export default function TemplatesDashboardPage() {
   const pathname = usePathname() ?? "/dashboard/templates";
-  const searchParams = useSearchParams();
-  const isPreviewMode = searchParams?.get("preview") === "1";
+  const isPreviewMode = usePreviewMode();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [tab, setTab] = useState<TemplateTab>("all");
   const [query, setQuery] = useState("");

@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { MdDelete, MdEdit, MdMenu, MdVisibility, MdClose, MdWarningAmber } from "react-icons/md";
 import { apiRequest } from "@/lib/api-client";
 import { cn } from "@/lib/cn";
 import { SidebarMenu, withPreviewParam } from "@/components/dashboard/SidebarMenu";
+import { usePreviewMode } from "@/hooks/use-preview-mode";
 
 type OrderStatus = "Pending" | "Processing" | "Shipped" | "Delivered" | "Cancelled";
 type Order = {
@@ -24,8 +25,7 @@ type Order = {
 
 export default function OrdersPage() {
   const pathname = usePathname() ?? "/dashboard/orders";
-  const searchParams = useSearchParams();
-  const isPreviewMode = searchParams?.get("preview") === "1";
+  const isPreviewMode = usePreviewMode();
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);

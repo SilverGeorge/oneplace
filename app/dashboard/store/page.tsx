@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import {
   MdCheckCircle,
   MdDashboard,
@@ -23,6 +22,7 @@ import {
 } from "react-icons/md";
 import { apiRequest } from "@/lib/api-client";
 import { cn } from "@/lib/cn";
+import { usePreviewMode } from "@/hooks/use-preview-mode";
 
 type Tab = "overview" | "settings" | "analytics" | "reviews";
 type SettingsSubTab = "general" | "business" | "branding" | "delivery" | "policies" | "payment";
@@ -136,8 +136,7 @@ const emptyOverview: StoreOverviewData = {
 };
 
 export default function StoreSectionPage() {
-  const searchParams = useSearchParams();
-  const isPreviewMode = searchParams?.get("preview") === "1";
+  const isPreviewMode = usePreviewMode();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [settingsSubTab, setSettingsSubTab] = useState<SettingsSubTab>("general");
   const [range, setRange] = useState<TimeRange>("30d");

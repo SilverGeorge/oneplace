@@ -2,12 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { MdChat, MdDelete, MdEdit, MdMenu, MdVisibility, MdClose } from "react-icons/md";
 import { apiRequest } from "@/lib/api-client";
 import { cn } from "@/lib/cn";
 import { SidebarMenu, withPreviewParam } from "@/components/dashboard/SidebarMenu";
+import { usePreviewMode } from "@/hooks/use-preview-mode";
 
 type CustomerStatus = "Active" | "Inactive" | "Blocked";
 type Customer = {
@@ -25,8 +26,7 @@ type Customer = {
 
 export default function CustomersPage() {
   const pathname = usePathname() ?? "/dashboard/customers";
-  const searchParams = useSearchParams();
-  const isPreviewMode = searchParams?.get("preview") === "1";
+  const isPreviewMode = usePreviewMode();
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [customers, setCustomers] = useState<Customer[]>([]);

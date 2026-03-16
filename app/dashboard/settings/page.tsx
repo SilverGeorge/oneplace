@@ -3,11 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { MdMenu } from "react-icons/md";
 import { apiRequest } from "@/lib/api-client";
 import { cn } from "@/lib/cn";
 import { SidebarMenu, withPreviewParam } from "@/components/dashboard/SidebarMenu";
+import { usePreviewMode } from "@/hooks/use-preview-mode";
 
 type SettingsCategory =
   | "account"
@@ -60,8 +61,7 @@ const inputClass =
 
 export default function SettingsPage() {
   const pathname = usePathname() ?? "/dashboard/settings";
-  const searchParams = useSearchParams();
-  const isPreviewMode = searchParams?.get("preview") === "1";
+  const isPreviewMode = usePreviewMode();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const [category, setCategory] = useState<SettingsCategory>("account");

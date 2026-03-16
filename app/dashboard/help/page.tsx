@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, useMemo, useState } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   MdMenu,
   MdSearch,
@@ -16,6 +16,7 @@ import {
 } from "react-icons/md";
 import { cn } from "@/lib/cn";
 import { SidebarMenu, withPreviewParam } from "@/components/dashboard/SidebarMenu";
+import { usePreviewMode } from "@/hooks/use-preview-mode";
 
 type Tab = "faq" | "kb" | "contact" | "status";
 
@@ -51,8 +52,7 @@ const faqItems = [
 
 export default function HelpPage() {
   const pathname = usePathname() ?? "/dashboard/help";
-  const searchParams = useSearchParams();
-  const isPreviewMode = searchParams?.get("preview") === "1";
+  const isPreviewMode = usePreviewMode();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [tab, setTab] = useState<Tab>("faq");
   const [selectedCategory, setSelectedCategory] = useState("start");

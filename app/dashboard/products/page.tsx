@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
   MdAdd,
@@ -23,6 +23,7 @@ import {
 import { apiRequest } from "@/lib/api-client";
 import { cn } from "@/lib/cn";
 import { SidebarMenu, withPreviewParam } from "@/components/dashboard/SidebarMenu";
+import { usePreviewMode } from "@/hooks/use-preview-mode";
 
 type ProductStatus = "Active" | "Inactive" | "Draft" | "Out of Stock";
 type Product = {
@@ -59,8 +60,7 @@ const inputClass =
 
 export default function ProductsPage() {
   const pathname = usePathname() ?? "/dashboard/products";
-  const searchParams = useSearchParams();
-  const isPreviewMode = searchParams?.get("preview") === "1";
+  const isPreviewMode = usePreviewMode();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<TabId>("all");
   const [products, setProducts] = useState<Product[]>([]);

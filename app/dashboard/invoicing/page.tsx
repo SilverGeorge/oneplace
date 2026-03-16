@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
 import {
   MdClose,
@@ -14,6 +14,7 @@ import {
 } from "react-icons/md";
 import { cn } from "@/lib/cn";
 import { SidebarMenu, withPreviewParam } from "@/components/dashboard/SidebarMenu";
+import { usePreviewMode } from "@/hooks/use-preview-mode";
 
 type InvoiceStatus = "Draft" | "Sent" | "Paid" | "Overdue" | "Cancelled";
 type Invoice = {
@@ -67,8 +68,7 @@ type Tab = "all" | "create" | "templates";
 
 export default function InvoicingPage() {
   const pathname = usePathname() ?? "/dashboard/invoicing";
-  const searchParams = useSearchParams();
-  const isPreviewMode = searchParams?.get("preview") === "1";
+  const isPreviewMode = usePreviewMode();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("all");
   const [query, setQuery] = useState("");

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
   MdDashboard,
@@ -31,6 +31,7 @@ import {
 } from "react-icons/md";
 import { apiRequest } from "@/lib/api-client";
 import { cn } from "@/lib/cn";
+import { usePreviewMode } from "@/hooks/use-preview-mode";
 
 type Kpi = {
   label: string;
@@ -101,8 +102,7 @@ const salesByCategory = [
 
 export default function DashboardPage() {
   const pathname = usePathname() ?? "/dashboard";
-  const searchParams = useSearchParams();
-  const isPreviewMode = searchParams?.get("preview") === "1";
+  const isPreviewMode = usePreviewMode();
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");

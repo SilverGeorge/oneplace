@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
 import { MdCheckCircle, MdClose, MdMenu, MdWarningAmber } from "react-icons/md";
 import { cn } from "@/lib/cn";
 import { SidebarMenu, withPreviewParam } from "@/components/dashboard/SidebarMenu";
+import { usePreviewMode } from "@/hooks/use-preview-mode";
 
 type Tab = "current" | "history" | "payment" | "upgrade";
 
@@ -28,8 +29,7 @@ const plans = [
 
 export default function SubscriptionPage() {
   const pathname = usePathname() ?? "/dashboard/subscription";
-  const searchParams = useSearchParams();
-  const isPreviewMode = searchParams?.get("preview") === "1";
+  const isPreviewMode = usePreviewMode();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [tab, setTab] = useState<Tab>("current");
   const [showUpgrade, setShowUpgrade] = useState(false);
