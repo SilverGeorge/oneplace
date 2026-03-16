@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { MdFavorite, MdFavoriteBorder, MdStar } from "react-icons/md";
 import { getProductById } from "@/app/store/data";
+import { useStorefrontTheme } from "@/hooks/use-storefront-theme";
 
 export default function ProductDetailPage() {
   const params = useParams<{ username: string; id: string }>();
@@ -20,17 +21,22 @@ export default function ProductDetailPage() {
   const [reviewName, setReviewName] = useState("");
   const [reviewText, setReviewText] = useState("");
   const [toast, setToast] = useState<string | null>(null);
+  const { colors } = useStorefrontTheme();
 
   const subtotal = useMemo(() => (product ? product.price * qty : 0), [product, qty]);
 
   if (!product) {
     return (
-      <main className="min-h-screen bg-[#f6f8f9] px-4 py-10 sm:px-6">
+      <main
+        className="min-h-screen px-4 py-10 sm:px-6"
+        style={{ backgroundColor: colors.background }}
+      >
         <div className="mx-auto max-w-3xl rounded-xl border border-[#e0e0e0] bg-white p-6 text-center">
           <h1 className="text-2xl font-bold text-[#1a1a1a]">Product not found</h1>
           <Link
             href={`/store/${username}`}
-            className="mt-3 inline-flex rounded-lg bg-[#008080] px-4 py-2 text-sm font-semibold text-white"
+            className="mt-3 inline-flex rounded-lg px-4 py-2 text-sm font-semibold text-white"
+            style={{ backgroundColor: colors.primary }}
           >
             Back to Store
           </Link>
@@ -71,11 +77,12 @@ export default function ProductDetailPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f6f8f9] px-4 py-6 sm:px-6">
+    <main className="min-h-screen px-4 py-6 sm:px-6" style={{ backgroundColor: colors.background }}>
       <div className="mx-auto max-w-6xl">
         <Link
           href={`/store/${username}`}
-          className="text-sm font-semibold text-[#008080] hover:underline"
+          className="text-sm font-semibold hover:underline"
+          style={{ color: colors.primary }}
         >
           ← Back to Store
         </Link>
@@ -93,7 +100,7 @@ export default function ProductDetailPage() {
               <MdStar size={16} className="text-[#ffc300]" /> {resolvedProduct.rating.toFixed(1)} (
               {resolvedProduct.reviews} reviews)
             </p>
-            <p className="mt-3 text-3xl font-bold text-[#008080]">
+            <p className="mt-3 text-3xl font-bold" style={{ color: colors.primary }}>
               ${resolvedProduct.price.toFixed(2)}
             </p>
             <p className="mt-2 text-sm text-[#666]">{resolvedProduct.description}</p>
@@ -148,7 +155,8 @@ export default function ProductDetailPage() {
               <button
                 type="button"
                 onClick={addToCart}
-                className="rounded-lg bg-[#008080] px-4 py-2 text-sm font-semibold text-white"
+                className="rounded-lg px-4 py-2 text-sm font-semibold text-white"
+                style={{ backgroundColor: colors.primary }}
               >
                 Add to Cart
               </button>
@@ -158,7 +166,8 @@ export default function ProductDetailPage() {
                   addToCart();
                   router.push(`/store/${username}/checkout`);
                 }}
-                className="rounded-lg border border-[#008080] px-4 py-2 text-sm font-semibold text-[#008080]"
+                className="rounded-lg border px-4 py-2 text-sm font-semibold"
+                style={{ borderColor: colors.primary, color: colors.primary }}
               >
                 Buy Now
               </button>
@@ -206,7 +215,8 @@ export default function ProductDetailPage() {
           <button
             type="button"
             onClick={submitReview}
-            className="mt-3 rounded-lg bg-[#008080] px-4 py-2 text-sm font-semibold text-white"
+            className="mt-3 rounded-lg px-4 py-2 text-sm font-semibold text-white"
+            style={{ backgroundColor: colors.primary }}
           >
             Submit Review
           </button>

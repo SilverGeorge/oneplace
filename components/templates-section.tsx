@@ -5,89 +5,13 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MdCheck } from "react-icons/md";
 import { cn } from "@/lib/cn";
+import {
+  STOREFRONT_TEMPLATE_CONFIG_KEY,
+  StorefrontTemplate,
+  storefrontTemplates
+} from "@/lib/storefront-templates";
 
-type Template = {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
-  badge: "FREE" | "PREMIUM" | "POPULAR";
-  features: string[];
-  category: "Retail" | "Services" | "Food" | "Fashion" | "Tech";
-  rating: number;
-  users: number;
-};
-
-const templates: Template[] = [
-  {
-    id: "minimal-store",
-    name: "Minimal Store",
-    description: "Perfect for small businesses and startups",
-    image: "/images/template-minimal.jpg",
-    features: ["Simple layout", "Fast loading", "Easy navigation"],
-    badge: "FREE",
-    category: "Retail",
-    rating: 4.7,
-    users: 1200
-  },
-  {
-    id: "professional-market",
-    name: "Professional Market",
-    description: "Ideal for multi-vendor marketplaces",
-    image: "/images/template-professional.jpg",
-    features: ["Vendor dashboard", "Commission management", "Reviews", "Admin controls"],
-    badge: "PREMIUM",
-    category: "Retail",
-    rating: 4.8,
-    users: 2500
-  },
-  {
-    id: "fashion-boutique",
-    name: "Fashion Boutique",
-    description: "Tailored for fashion and lifestyle brands",
-    image: "/images/template-fashion.jpg",
-    features: ["Image gallery", "Size guides", "Trending products", "Lookbooks"],
-    badge: "PREMIUM",
-    category: "Fashion",
-    rating: 4.9,
-    users: 1800
-  },
-  {
-    id: "food-grocery",
-    name: "Food & Grocery",
-    description: "Perfect for restaurants and grocery stores",
-    image: "/images/template-food.jpg",
-    features: ["Category browsing", "Quick order", "Delivery tracking", "Order updates"],
-    badge: "FREE",
-    category: "Food",
-    rating: 4.6,
-    users: 1400
-  },
-  {
-    id: "tech-electronics",
-    name: "Tech & Electronics",
-    description: "For tech and electronics retailers",
-    image: "/images/template-tech.jpg",
-    features: ["Product specs", "Tech reviews", "Comparison tools", "Filter presets"],
-    badge: "POPULAR",
-    category: "Tech",
-    rating: 4.8,
-    users: 2500
-  },
-  {
-    id: "services-marketplace",
-    name: "Services Marketplace",
-    description: "For service providers and freelancers",
-    image: "/images/template-services.jpg",
-    features: ["Booking system", "Reviews", "Ratings", "Service packages"],
-    badge: "PREMIUM",
-    category: "Services",
-    rating: 4.8,
-    users: 2100
-  }
-];
-
-function badgeStyle(badge: Template["badge"]): string {
+function badgeStyle(badge: StorefrontTemplate["badge"]): string {
   if (badge === "FREE") return "bg-[#27ae60]";
   if (badge === "POPULAR") return "bg-[#e74c3c]";
   return "bg-[#ffc300] text-slate-900";
@@ -95,22 +19,43 @@ function badgeStyle(badge: Template["badge"]): string {
 
 export default function TemplatesSection() {
   const router = useRouter();
-  const [previewTemplate, setPreviewTemplate] = useState<Template | null>(null);
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
   const [badgeFilter, setBadgeFilter] = useState<"ALL" | "FREE" | "PREMIUM" | "POPULAR">("ALL");
-  const [categoryFilter, setCategoryFilter] = useState<"ALL" | Template["category"]>("ALL");
+  const [categoryFilter, setCategoryFilter] = useState<"ALL" | StorefrontTemplate["category"]>(
+    "ALL"
+  );
 
   const filteredTemplates = useMemo(() => {
-    return templates.filter((template) => {
+    return storefrontTemplates.filter((template) => {
       const badgeMatch = badgeFilter === "ALL" || template.badge === badgeFilter;
       const categoryMatch = categoryFilter === "ALL" || template.category === categoryFilter;
       return badgeMatch && categoryMatch;
     });
   }, [badgeFilter, categoryFilter]);
 
-  function handleUseTemplate(template: Template): void {
+  function saveTemplateConfig(
+    template: StorefrontTemplate,
+    selectedColors: StorefrontTemplate["palette"]
+  ) {
     localStorage.setItem("selected-template", JSON.stringify(template));
+    localStorage.setItem(
+      STOREFRONT_TEMPLATE_CONFIG_KEY,
+      JSON.stringify({
+        templateId: template.id,
+        templateName: template.name,
+        colors: selectedColors
+      })
+    );
+  }
+
+  function handleUseTemplate(template: StorefrontTemplate): void {
+    saveTemplateConfig(template, template.palette);
     router.push(`/storefront/create?template=${template.id}`);
+  }
+
+  function handlePreviewTemplate(template: StorefrontTemplate) {
+    saveTemplateConfig(template, template.palette);
+    window.open("/store/jon-smith-electronics", "_blank", "noopener,noreferrer");
   }
 
   return (
@@ -139,21 +84,21 @@ export default function TemplatesSection() {
               {filter}
             </button>
           ))}
-          {/* Commented out the "all industries" section
-        <select
-          value={categoryFilter}
-          onChange={(event) => setCategoryFilter(event.target.value as "ALL" | Template["category"])}
-          className="rounded-full border border-[#e0e0e0] bg-white px-4 py-2 text-xs font-semibold text-slate-700 focus:border-[#008080] focus:outline-none"
-        >
-          
-          <option value="ALL">All Industries</option>
-          <option value="Retail">Retail</option>
-          <option value="Services">Services</option>
-          <option value="Food">Food</option>
-          <option value="Fashion">Fashion</option>
-          <option value="Tech">Tech</option>
-        </select>
-        */}
+          <select
+            value={categoryFilter}
+            onChange={(event) =>
+              setCategoryFilter(event.target.value as "ALL" | StorefrontTemplate["category"])
+            }
+            className="rounded-full border border-[#e0e0e0] bg-white px-4 py-2 text-xs font-semibold text-slate-700 focus:border-[#008080] focus:outline-none"
+          >
+            <option value="ALL">All Industries</option>
+            <option value="Retail">Retail</option>
+            <option value="Marketplace">Marketplace</option>
+            <option value="Fashion">Fashion</option>
+            <option value="Food">Food</option>
+            <option value="Tech">Tech</option>
+            <option value="Services">Services</option>
+          </select>
         </div>
 
         <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -223,99 +168,16 @@ export default function TemplatesSection() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setPreviewTemplate(template)}
+                    onClick={() => handlePreviewTemplate(template)}
                     className="w-full rounded-lg border border-[#008080] bg-transparent px-6 py-3 text-[14px] font-semibold text-[#008080] transition duration-300 hover:bg-[#f0fffe]"
                   >
                     Preview
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => router.push("/storefront/create-account")}
-                    className="w-full text-[13px] font-semibold text-[#008080] transition duration-300 hover:underline"
-                  >
-                    Skip this step and choose later
                   </button>
                 </div>
               </div>
             </article>
           ))}
         </div>
-
-        {/* Commented out the "Can't decide?" section
-        <div className="mt-10 rounded-2xl border border-[#e0e0e0] bg-white p-6 text-center shadow-sm">
-          <h3 className="text-2xl font-bold text-[#1a1a1a]">Can&apos;t decide? Let us help!</h3>
-          <p className="mx-auto mt-2 max-w-xl text-sm text-[#666666]">
-            Get personalized template recommendations based on your store type and goals.
-          </p>
-          <div className="mt-4 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <button
-              type="button"
-              onClick={() => router.push("/contact")}
-              className="rounded-lg bg-[#008080] px-5 py-3 text-sm font-semibold text-white transition duration-300 hover:scale-[1.02] hover:bg-[#0a6d6d]"
-            >
-              Schedule a consultation
-            </button>
-            <button
-              type="button"
-              onClick={() => router.push("/templates")}
-              className="rounded-lg border border-[#008080] px-5 py-3 text-sm font-semibold text-[#008080] transition duration-300 hover:bg-[#f0fffe]"
-            >
-              View full template showcase
-            </button>
-          </div>
-        </div>
-        */}
-
-        {previewTemplate ? (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-            onClick={() => setPreviewTemplate(null)}
-          >
-            <div
-              className="w-full max-w-3xl rounded-2xl bg-white p-5 shadow-2xl sm:p-6"
-              onClick={(event) => event.stopPropagation()}
-            >
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-xl font-bold text-slate-900">{previewTemplate.name}</h3>
-                <button
-                  type="button"
-                  onClick={() => setPreviewTemplate(null)}
-                  className="rounded-lg border border-slate-300 px-3 py-1 text-sm text-slate-700 transition hover:bg-slate-100"
-                >
-                  Close
-                </button>
-              </div>
-              <div className="relative h-[260px] w-full overflow-hidden rounded-xl bg-[#f0f0f0] sm:h-[380px]">
-                {imageErrors[`preview-${previewTemplate.id}`] ? (
-                  <div className="flex h-full w-full items-center justify-center text-sm text-slate-500">
-                    Preview unavailable
-                  </div>
-                ) : (
-                  <Image
-                    src={previewTemplate.image}
-                    alt={`${previewTemplate.name} preview`}
-                    fill
-                    className="object-cover"
-                    unoptimized
-                    onError={() =>
-                      setImageErrors((prev) => ({
-                        ...prev,
-                        [`preview-${previewTemplate.id}`]: true
-                      }))
-                    }
-                  />
-                )}
-              </div>
-              <button
-                type="button"
-                onClick={() => handleUseTemplate(previewTemplate)}
-                className="mt-4 w-full rounded-lg bg-[#008080] px-6 py-3 text-[14px] font-semibold text-white transition duration-300 hover:scale-[1.02] hover:bg-[#0a6d6d]"
-              >
-                Use Template
-              </button>
-            </div>
-          </div>
-        ) : null}
       </div>
     </section>
   );

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { getProductById } from "@/app/store/data";
+import { useStorefrontTheme } from "@/hooks/use-storefront-theme";
 
 type CartLine = { productId: string; qty: number };
 
@@ -24,6 +25,7 @@ export default function CheckoutPage() {
   const [address, setAddress] = useState("");
   const [card, setCard] = useState("");
   const [toast, setToast] = useState<string | null>(null);
+  const { colors } = useStorefrontTheme();
 
   const subtotal = useMemo(() => {
     return cartLines.reduce((sum, line) => {
@@ -47,11 +49,12 @@ export default function CheckoutPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f6f8f9] px-4 py-6 sm:px-6">
+    <main className="min-h-screen px-4 py-6 sm:px-6" style={{ backgroundColor: colors.background }}>
       <div className="mx-auto max-w-6xl">
         <Link
           href={`/store/${username}`}
-          className="text-sm font-semibold text-[#008080] hover:underline"
+          className="text-sm font-semibold hover:underline"
+          style={{ color: colors.primary }}
         >
           ← Continue Shopping
         </Link>
@@ -135,7 +138,8 @@ export default function CheckoutPage() {
             <button
               type="button"
               onClick={placeOrder}
-              className="mt-4 w-full rounded-lg bg-[#008080] px-4 py-2 text-sm font-semibold text-white"
+              className="mt-4 w-full rounded-lg px-4 py-2 text-sm font-semibold text-white"
+              style={{ backgroundColor: colors.primary }}
             >
               Place Order
             </button>

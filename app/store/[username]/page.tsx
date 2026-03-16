@@ -7,8 +7,9 @@ import { useMemo, useState } from "react";
 import { MdFavorite, MdFavoriteBorder, MdFilterAlt, MdShoppingCart, MdStar } from "react-icons/md";
 import { cn } from "@/lib/cn";
 import { storeProducts } from "@/app/store/data";
+import { useStorefrontConfig } from "@/hooks/use-storefront-config";
 
-type StoreTab = "all" | "new" | "best" | "about" | "reviews" | "contact";
+type StoreTab = "all" | "new" | "best" | "about";
 
 type CartItem = {
   productId: string;
@@ -26,14 +27,29 @@ export default function VendorStorePage() {
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [toast, setToast] = useState<string | null>(null);
-  const [reviewName, setReviewName] = useState("");
-  const [reviewText, setReviewText] = useState("");
-  const [contactName, setContactName] = useState("");
-  const [contactEmail, setContactEmail] = useState("");
-  const [contactMessage, setContactMessage] = useState("");
+
+  const {
+    colors,
+    templateName,
+    coverImage,
+    logoImage,
+    fontFamily,
+    layout,
+    storeName,
+    storeDescription,
+    navigationItems,
+    footerText,
+    footerLinks,
+    customProducts
+  } = useStorefrontConfig();
+  const productsSource = customProducts.length ? customProducts : storeProducts;
+
+  const isPreviewMode =
+    typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("preview") === "1";
 
   const filteredProducts = useMemo(() => {
-    let rows = storeProducts;
+    let rows = productsSource;
     if (tab === "new") rows = rows.filter((item) => item.isNew);
     if (tab === "best") rows = rows.filter((item) => item.isBestSeller);
     rows = rows.filter((item) =>
@@ -47,7 +63,7 @@ export default function VendorStorePage() {
       return b.rating - a.rating;
     });
     return rows;
-  }, [tab, query, category, sort]);
+  }, [tab, query, category, sort, productsSource]);
 
   const cartCount = useMemo(() => cart.reduce((sum, item) => sum + item.qty, 0), [cart]);
 
@@ -66,57 +82,43 @@ export default function VendorStorePage() {
   function addToCart(productId: string) {
     setCart((prev) => {
       const exists = prev.find((item) => item.productId === productId);
-      if (exists)
+      if (exists) {
         return prev.map((item) =>
           item.productId === productId ? { ...item, qty: item.qty + 1 } : item
         );
+      }
       return [...prev, { productId, qty: 1 }];
     });
     notify("Added to cart");
   }
 
-  function submitReview() {
-    if (!reviewName.trim() || reviewText.trim().length < 10) {
-      notify("Enter name and a longer review");
-      return;
-    }
-    notify("Review submitted successfully");
-    setReviewName("");
-    setReviewText("");
-  }
-
-  function submitContact() {
-    if (!contactName.trim() || !contactEmail.trim() || contactMessage.trim().length < 15) {
-      notify("Please complete contact form");
-      return;
-    }
-    notify("Message sent. We will contact you shortly.");
-    setContactName("");
-    setContactEmail("");
-    setContactMessage("");
-  }
-
   return (
-    <main className="min-h-screen bg-[#f6f8f9]">
-      <section className="relative h-48 bg-gradient-to-r from-[#0f766e] to-[#115e59] sm:h-64">
+    <main
+      className="min-h-screen"
+      style={{ backgroundColor: colors.background, color: colors.text, fontFamily }}
+    >
+      <section
+        className="relative h-48 sm:h-64"
+        style={{ background: `linear-gradient(120deg, ${colors.primary}, ${colors.accent})` }}
+      >
         <img
-          src="https://picsum.photos/1600/480?random=71"
+          src={coverImage || "https://picsum.photos/1600/480?random=71"}
           alt="Store cover"
           className="h-full w-full object-cover opacity-45"
         />
         <div className="absolute inset-x-4 bottom-4 mx-auto flex max-w-6xl items-end gap-3 sm:inset-x-6">
           <img
-            src="https://picsum.photos/160/160?random=72"
+            src={logoImage || "https://picsum.photos/160/160?random=72"}
             alt="Store logo"
             className="h-16 w-16 rounded-xl border-2 border-white object-cover sm:h-20 sm:w-20"
           />
           <div className="text-white">
-            <h1 className="text-2xl font-bold capitalize sm:text-3xl">
-              {username.replace(/-/g, " ")} Store
-            </h1>
+            <h1 className="text-2xl font-bold capitalize sm:text-3xl">{storeName}</h1>
             <p className="inline-flex items-center gap-1 text-sm">
               <MdStar size={16} className="text-[#ffc300]" /> 4.8 (1,234 reviews)
             </p>
+            <p className="text-xs opacity-90">Template: {templateName}</p>
+            <p className="mt-1 max-w-xl text-xs opacity-90">{storeDescription}</p>
           </div>
         </div>
       </section>
@@ -124,13 +126,11 @@ export default function VendorStorePage() {
       <div className="mx-auto max-w-6xl px-4 py-4 sm:px-6">
         <div className="mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-[#e0e0e0] bg-white p-3 shadow-sm">
           {[
-            { id: "all", label: "All Products" },
-            { id: "new", label: "New Arrivals" },
-            { id: "best", label: "Best Sellers" },
-            { id: "about", label: "About" },
-            { id: "reviews", label: "Reviews" },
-            { id: "contact", label: "Contact" }
-          ].map((item) => (
+            { id: "all", fallback: "All Products" },
+            { id: "new", fallback: "New Arrivals" },
+            { id: "best", fallback: "Best Sellers" },
+            { id: "about", fallback: "About" }
+          ].map((item, index) => (
             <button
               key={item.id}
               type="button"
@@ -138,21 +138,29 @@ export default function VendorStorePage() {
               className={cn(
                 "rounded-lg border px-3 py-2 text-sm transition",
                 tab === item.id
-                  ? "border-[#008080] bg-[#008080] font-semibold text-white"
+                  ? "font-semibold text-white"
                   : "border-[#e0e0e0] text-[#333] hover:bg-[#f8fffe]"
               )}
+              style={
+                tab === item.id
+                  ? { borderColor: colors.primary, backgroundColor: colors.primary }
+                  : undefined
+              }
             >
-              {item.label}
+              {navigationItems[index] ?? item.fallback}
             </button>
           ))}
-          <button
-            type="button"
-            onClick={() => router.push(`/store/${username}/checkout`)}
-            className="ml-auto inline-flex items-center gap-1 rounded-lg bg-[#008080] px-3 py-2 text-sm font-semibold text-white"
-          >
-            <MdShoppingCart size={16} />
-            Cart ({cartCount})
-          </button>
+          {!isPreviewMode ? (
+            <button
+              type="button"
+              onClick={() => router.push(`/store/${username}/checkout`)}
+              className="ml-auto inline-flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-semibold text-white"
+              style={{ backgroundColor: colors.primary }}
+            >
+              <MdShoppingCart size={16} />
+              Cart ({cartCount})
+            </button>
+          ) : null}
         </div>
 
         {tab === "all" || tab === "new" || tab === "best" ? (
@@ -195,150 +203,114 @@ export default function VendorStorePage() {
               </div>
             </section>
 
-            <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              {filteredProducts.map((product) => (
-                <article
-                  key={product.id}
-                  className="group overflow-hidden rounded-xl border border-[#e0e0e0] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-                >
-                  <Link href={`/store/${username}/product/${product.id}`}>
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="h-48 w-full object-cover"
-                    />
-                  </Link>
-                  <div className="p-4">
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
+            {isPreviewMode ? (
+              <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <article
+                    key={index}
+                    className="overflow-hidden rounded-xl border border-[#e0e0e0] bg-white shadow-sm"
+                  >
+                    <div className="h-48 bg-[#f0f0f0]" />
+                    <div className="p-4">
+                      <div className="h-4 w-2/3 rounded bg-[#efefef]" />
+                      <div className="mt-2 h-3 w-1/3 rounded bg-[#f2f2f2]" />
+                      <div
+                        className="mt-4 h-9 rounded"
+                        style={{ backgroundColor: colors.primary, opacity: 0.18 }}
+                      />
+                    </div>
+                  </article>
+                ))}
+              </section>
+            ) : (
+              <section
+                className={cn(
+                  "grid gap-4",
+                  layout === "full"
+                    ? "grid-cols-1"
+                    : layout === "sidebar"
+                      ? "grid-cols-1 lg:grid-cols-2"
+                      : "sm:grid-cols-2 xl:grid-cols-3"
+                )}
+              >
+                {filteredProducts.map((product) => (
+                  <article
+                    key={product.id}
+                    className="group overflow-hidden rounded-xl border border-[#e0e0e0] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                  >
+                    <Link href={`/store/${username}/product/${product.id}`}>
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="h-48 w-full object-cover"
+                      />
+                    </Link>
+                    <div className="p-4">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <Link
+                            href={`/store/${username}/product/${product.id}`}
+                            className="text-base font-bold text-[#1a1a1a] transition"
+                            style={{ color: colors.text }}
+                          >
+                            {product.name}
+                          </Link>
+                          <p className="text-xs text-[#666]">{product.category}</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => toggleWishlist(product.id)}
+                          aria-label={`Wishlist ${product.name}`}
+                        >
+                          {wishlist.includes(product.id) ? (
+                            <MdFavorite className="text-[#e74c3c]" size={20} />
+                          ) : (
+                            <MdFavoriteBorder className="text-[#666]" size={20} />
+                          )}
+                        </button>
+                      </div>
+                      <p className="mt-2 text-lg font-bold" style={{ color: colors.primary }}>
+                        ${product.price.toFixed(2)}
+                      </p>
+                      <p className="text-xs text-[#666]">
+                        ⭐ {product.rating.toFixed(1)} ({product.reviews}) • {product.sold} sold
+                      </p>
+                      <div className="mt-3 flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => addToCart(product.id)}
+                          className="rounded-lg px-3 py-2 text-xs font-semibold text-white"
+                          style={{ backgroundColor: colors.primary }}
+                        >
+                          Add to Cart
+                        </button>
                         <Link
                           href={`/store/${username}/product/${product.id}`}
-                          className="text-base font-bold text-[#1a1a1a] hover:text-[#008080]"
+                          className="rounded-lg border px-3 py-2 text-xs font-semibold"
+                          style={{ borderColor: colors.primary, color: colors.primary }}
                         >
-                          {product.name}
+                          View Details
                         </Link>
-                        <p className="text-xs text-[#666]">{product.category}</p>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => toggleWishlist(product.id)}
-                        aria-label={`Wishlist ${product.name}`}
-                      >
-                        {wishlist.includes(product.id) ? (
-                          <MdFavorite className="text-[#e74c3c]" size={20} />
-                        ) : (
-                          <MdFavoriteBorder className="text-[#666]" size={20} />
-                        )}
-                      </button>
                     </div>
-                    <p className="mt-2 text-lg font-bold text-[#008080]">
-                      ${product.price.toFixed(2)}
-                    </p>
-                    <p className="text-xs text-[#666]">
-                      ⭐ {product.rating.toFixed(1)} ({product.reviews}) • {product.sold} sold
-                    </p>
-                    <div className="mt-3 flex gap-2">
-                      <button
-                        type="button"
-                        onClick={() => addToCart(product.id)}
-                        className="rounded-lg bg-[#008080] px-3 py-2 text-xs font-semibold text-white"
-                      >
-                        Add to Cart
-                      </button>
-                      <Link
-                        href={`/store/${username}/product/${product.id}`}
-                        className="rounded-lg border border-[#e0e0e0] px-3 py-2 text-xs font-semibold text-[#333]"
-                      >
-                        View Details
-                      </Link>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </section>
+                  </article>
+                ))}
+              </section>
+            )}
           </>
         ) : null}
 
         {tab === "about" ? (
           <section className="rounded-xl border border-[#e0e0e0] bg-white p-5 shadow-sm">
             <h2 className="text-2xl font-bold text-[#1a1a1a]">About This Store</h2>
-            <p className="mt-2 text-sm text-[#666]">
-              {username.replace(/-/g, " ")} is a trusted vendor delivering high-quality products and
-              fast support. We focus on premium inventory, fast shipping, and customer-first
-              service.
-            </p>
+            <p className="mt-2 text-sm text-[#666]">{storeDescription}</p>
           </section>
         ) : null}
 
-        {tab === "reviews" ? (
-          <section className="rounded-xl border border-[#e0e0e0] bg-white p-5 shadow-sm">
-            <h2 className="text-2xl font-bold text-[#1a1a1a]">Customer Reviews</h2>
-            <div className="mt-3 space-y-2 text-sm">
-              <p className="rounded-lg bg-[#f8fffe] p-3">
-                ⭐ 5.0 &quot;Great quality and quick shipping.&quot; - Alice
-              </p>
-              <p className="rounded-lg bg-[#f8fffe] p-3">
-                ⭐ 4.0 &quot;Product was as described.&quot; - Mark
-              </p>
-            </div>
-            <div className="mt-4 grid gap-2 md:grid-cols-2">
-              <input
-                value={reviewName}
-                onChange={(e) => setReviewName(e.target.value)}
-                className={inputClass}
-                placeholder="Your name"
-              />
-              <textarea
-                value={reviewText}
-                onChange={(e) => setReviewText(e.target.value)}
-                className={inputClass}
-                rows={3}
-                placeholder="Write your review..."
-              />
-            </div>
-            <button
-              type="button"
-              onClick={submitReview}
-              className="mt-3 rounded-lg bg-[#008080] px-4 py-2 text-sm font-semibold text-white"
-            >
-              Submit Review
-            </button>
-          </section>
-        ) : null}
-
-        {tab === "contact" ? (
-          <section className="rounded-xl border border-[#e0e0e0] bg-white p-5 shadow-sm">
-            <h2 className="text-2xl font-bold text-[#1a1a1a]">Contact Vendor</h2>
-            <div className="mt-3 grid gap-2 md:grid-cols-2">
-              <input
-                value={contactName}
-                onChange={(e) => setContactName(e.target.value)}
-                className={inputClass}
-                placeholder="Your name"
-              />
-              <input
-                value={contactEmail}
-                onChange={(e) => setContactEmail(e.target.value)}
-                className={inputClass}
-                placeholder="Your email"
-              />
-              <textarea
-                value={contactMessage}
-                onChange={(e) => setContactMessage(e.target.value)}
-                className={`${inputClass} md:col-span-2`}
-                rows={4}
-                placeholder="Message..."
-              />
-            </div>
-            <button
-              type="button"
-              onClick={submitContact}
-              className="mt-3 rounded-lg bg-[#008080] px-4 py-2 text-sm font-semibold text-white"
-            >
-              Send Message
-            </button>
-          </section>
-        ) : null}
+        <footer className="mt-6 rounded-xl border border-[#e0e0e0] bg-white px-4 py-5 text-sm text-[#666] shadow-sm">
+          <p className="font-semibold text-[#1a1a1a]">{footerText}</p>
+          <p className="mt-1">{footerLinks.join(" • ")}</p>
+        </footer>
       </div>
 
       {toast ? (
