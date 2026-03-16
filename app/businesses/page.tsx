@@ -1,5 +1,3 @@
-import { redirect } from "next/navigation";
-
 export default function BusinessesPage() {
-  redirect("/#categories");
+  return <main className="min-h-screen bg-white" />;
 }
