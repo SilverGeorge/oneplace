@@ -128,9 +128,13 @@ export default function StorefrontLoginPage() {
         </header>
 
         <section className="grid gap-6 md:grid-cols-5 lg:grid-cols-2">
-          <div className={`animate-form-fade rounded-xl bg-white p-5 shadow-sm sm:p-8 ${shakeForm ? "animate-shake" : ""}`}>
+          <div
+            className={`animate-form-fade rounded-xl bg-white p-5 shadow-sm sm:p-8 ${shakeForm ? "animate-shake" : ""}`}
+          >
             <h2 className="text-[32px] font-bold text-[#008080]">Welcome Back to Storefront</h2>
-            <p className="mt-2 text-[18px] text-gray-500">Sign in to manage your store and reach more customers</p>
+            <p className="mt-2 text-[18px] text-gray-500">
+              Sign in to manage your store and reach more customers
+            </p>
 
             {errorBanner ? (
               <div className="mt-4 rounded-lg border border-[#e74c3c]/30 bg-[#fdecea] px-4 py-3 text-sm font-medium text-[#e74c3c]">
@@ -140,14 +144,19 @@ export default function StorefrontLoginPage() {
 
             <form className="mt-5 space-y-4" onSubmit={handleSubmit} noValidate>
               <div>
-                <label htmlFor="email" className="mb-1 block text-[14px] font-semibold text-[#1a1a1a]">
+                <label
+                  htmlFor="email"
+                  className="mb-1 block text-[14px] font-semibold text-[#1a1a1a]"
+                >
                   Email Address *
                 </label>
                 <input
                   id="email"
                   type="email"
                   value={values.email}
-                  onChange={(event) => setValues((prev) => ({ ...prev, email: event.target.value }))}
+                  onChange={(event) =>
+                    setValues((prev) => ({ ...prev, email: event.target.value }))
+                  }
                   onBlur={() => setTouched((prev) => ({ ...prev, email: true }))}
                   aria-label="Email Address"
                   placeholder="your@email.com"
@@ -157,13 +166,18 @@ export default function StorefrontLoginPage() {
                 {shouldShowError("email") ? (
                   <p className="mt-1 text-[12px] text-[#e74c3c]">{errors.email}</p>
                 ) : (
-                  <p className="mt-1 text-[12px] text-[#999999]">Use the email associated with your storefront.</p>
+                  <p className="mt-1 text-[12px] text-[#999999]">
+                    Use the email associated with your storefront.
+                  </p>
                 )}
               </div>
 
               <div>
                 <div className="mb-1 flex items-center justify-between">
-                  <label htmlFor="password" className="block text-[14px] font-semibold text-[#1a1a1a]">
+                  <label
+                    htmlFor="password"
+                    className="block text-[14px] font-semibold text-[#1a1a1a]"
+                  >
                     Password *
                   </label>
                   <button
@@ -180,7 +194,9 @@ export default function StorefrontLoginPage() {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     value={values.password}
-                    onChange={(event) => setValues((prev) => ({ ...prev, password: event.target.value }))}
+                    onChange={(event) =>
+                      setValues((prev) => ({ ...prev, password: event.target.value }))
+                    }
                     onBlur={() => setTouched((prev) => ({ ...prev, password: true }))}
                     aria-label="Password"
                     className={inputClass(shouldShowError("password"))}
@@ -204,7 +220,9 @@ export default function StorefrontLoginPage() {
                 <input
                   type="checkbox"
                   checked={values.rememberMe}
-                  onChange={(event) => setValues((prev) => ({ ...prev, rememberMe: event.target.checked }))}
+                  onChange={(event) =>
+                    setValues((prev) => ({ ...prev, rememberMe: event.target.checked }))
+                  }
                   className="h-4 w-4 rounded border border-[#e0e0e0] accent-[#008080]"
                   disabled={isSubmitting}
                 />
@@ -255,7 +273,11 @@ export default function StorefrontLoginPage() {
                 </button>
               </div>
 
-              {successMessage ? <p className="animate-success-fade text-sm font-semibold text-[#27ae60]">{successMessage}</p> : null}
+              {successMessage ? (
+                <p className="animate-success-fade text-sm font-semibold text-[#27ae60]">
+                  {successMessage}
+                </p>
+              ) : null}
             </form>
           </div>
 

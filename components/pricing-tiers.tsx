@@ -90,7 +90,9 @@ export default function PricingTiers() {
               ) : null}
 
               <h3 className="text-lg font-semibold text-slate-900">{plan.name}</h3>
-              <p className="mt-3 text-3xl font-extrabold tracking-tight text-slate-900">{plan.price}</p>
+              <p className="mt-3 text-3xl font-extrabold tracking-tight text-slate-900">
+                {plan.price}
+              </p>
               <p className="mt-1 text-xs uppercase tracking-wide text-slate-500">Billed monthly</p>
 
               <ul className="mt-5 space-y-2">

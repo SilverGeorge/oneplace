@@ -20,8 +20,12 @@ function StorefrontCreateTemplateContent() {
   return (
     <main className="min-h-screen bg-[#f9f9f9] px-4 py-10 sm:px-6">
       <div className="mx-auto max-w-3xl rounded-2xl border border-[#e0e0e0] bg-white p-6 shadow-sm sm:p-8">
-        <p className="text-sm font-semibold uppercase tracking-wide text-[#008080]">Template Selection</p>
-        <h1 className="mt-2 text-3xl font-bold text-[#1a1a1a]">You selected: {template ?? "No template selected"}</h1>
+        <p className="text-sm font-semibold uppercase tracking-wide text-[#008080]">
+          Template Selection
+        </p>
+        <h1 className="mt-2 text-3xl font-bold text-[#1a1a1a]">
+          You selected: {template ?? "No template selected"}
+        </h1>
         <p className="mt-3 text-sm text-[#666666]">
           We saved your template choice. Continue to account creation to finish setup.
         </p>
@@ -49,7 +53,9 @@ function StorefrontCreateTemplateFallback() {
   return (
     <main className="min-h-screen bg-[#f9f9f9] px-4 py-10 sm:px-6">
       <div className="mx-auto max-w-3xl rounded-2xl border border-[#e0e0e0] bg-white p-6 shadow-sm sm:p-8">
-        <p className="text-sm font-semibold uppercase tracking-wide text-[#008080]">Template Selection</p>
+        <p className="text-sm font-semibold uppercase tracking-wide text-[#008080]">
+          Template Selection
+        </p>
         <h1 className="mt-2 text-3xl font-bold text-[#1a1a1a]">Loading template...</h1>
       </div>
     </main>

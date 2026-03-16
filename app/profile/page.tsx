@@ -91,7 +91,9 @@ export default function ProfilePage() {
       <Navbar />
       <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-10">
         <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">Your Profile</h1>
-        <p className="mt-2 text-sm text-slate-600">Update your personal details and profile image.</p>
+        <p className="mt-2 text-sm text-slate-600">
+          Update your personal details and profile image.
+        </p>
 
         <section className="card mt-6 p-5 sm:p-8">
           <form className="space-y-6" onSubmit={handleSubmit}>
@@ -121,7 +123,7 @@ export default function ProfilePage() {
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
-                  className="block w-full text-sm text-slate-600 file:mr-4 file:rounded-lg file:border-0 file:bg-brand-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-brand-700 hover:file:bg-brand-100"
+                  className="hover:file:bg-brand-100 block w-full text-sm text-slate-600 file:mr-4 file:rounded-lg file:border-0 file:bg-brand-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-brand-700"
                 />
               </div>
             </div>
@@ -131,13 +133,23 @@ export default function ProfilePage() {
                 <label htmlFor="fullName" className="mb-1 block text-sm font-medium text-slate-700">
                   Full Name
                 </label>
-                <Input id="fullName" type="text" value={name} onChange={(event) => setName(event.target.value)} />
+                <Input
+                  id="fullName"
+                  type="text"
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                />
               </div>
               <div>
                 <label htmlFor="email" className="mb-1 block text-sm font-medium text-slate-700">
                   Email
                 </label>
-                <Input id="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} />
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                />
               </div>
               <div className="sm:col-span-2">
                 <label htmlFor="bio" className="mb-1 block text-sm font-medium text-slate-700">
@@ -153,7 +165,9 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {errorMessage ? <p className="text-sm font-medium text-red-600">{errorMessage}</p> : null}
+            {errorMessage ? (
+              <p className="text-sm font-medium text-red-600">{errorMessage}</p>
+            ) : null}
 
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Saving..." : "Save Changes"}
@@ -161,7 +175,11 @@ export default function ProfilePage() {
           </form>
         </section>
       </main>
-      <Modal open={successModalOpen} title="Profile Updated" onClose={() => setSuccessModalOpen(false)}>
+      <Modal
+        open={successModalOpen}
+        title="Profile Updated"
+        onClose={() => setSuccessModalOpen(false)}
+      >
         Your profile details were saved successfully.
       </Modal>
     </div>

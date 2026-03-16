@@ -22,7 +22,8 @@ const faqItems = [
   },
   {
     question: "Do you offer onboarding for new vendors?",
-    answer: "Yes. Our onboarding specialists can guide you through setup, catalog upload, and first campaigns."
+    answer:
+      "Yes. Our onboarding specialists can guide you through setup, catalog upload, and first campaigns."
   },
   {
     question: "Can I request a custom enterprise demo?",
@@ -30,15 +31,18 @@ const faqItems = [
   },
   {
     question: "Where can I manage billing issues?",
-    answer: "Billing settings are available in your dashboard. You can also contact us for invoice support."
+    answer:
+      "Billing settings are available in your dashboard. You can also contact us for invoice support."
   },
   {
     question: "Do you provide 24/7 support?",
-    answer: "Priority channels are available 24/7 for premium plans, while standard support follows local hours."
+    answer:
+      "Priority channels are available 24/7 for premium plans, while standard support follows local hours."
   },
   {
     question: "How do I report a bug?",
-    answer: "Use the contact form with a clear subject and screenshots; our engineering team will investigate."
+    answer:
+      "Use the contact form with a clear subject and screenshots; our engineering team will investigate."
   },
   {
     question: "Can I integrate third-party tools?",
@@ -53,9 +57,11 @@ const faqItems = [
 function validate(values: ContactFormValues): ContactErrors {
   const errors: ContactErrors = {};
   if (!values.fullName.trim()) errors.fullName = "Full name is required.";
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) errors.email = "Please enter a valid email.";
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email))
+    errors.email = "Please enter a valid email.";
   if (!values.subject.trim()) errors.subject = "Subject is required.";
-  if (values.message.trim().length < 10) errors.message = "Message should be at least 10 characters.";
+  if (values.message.trim().length < 10)
+    errors.message = "Message should be at least 10 characters.";
   return errors;
 }
 
@@ -114,15 +120,22 @@ export default function ContactPage() {
 
             <form className="mt-5 space-y-4" onSubmit={handleSubmit} noValidate>
               <div>
-                <label htmlFor="fullName" className="mb-1 block text-sm font-semibold text-slate-800">
+                <label
+                  htmlFor="fullName"
+                  className="mb-1 block text-sm font-semibold text-slate-800"
+                >
                   Full Name
                 </label>
                 <input
                   id="fullName"
                   value={values.fullName}
-                  onChange={(event) => setValues((prev) => ({ ...prev, fullName: event.target.value }))}
+                  onChange={(event) =>
+                    setValues((prev) => ({ ...prev, fullName: event.target.value }))
+                  }
                   onBlur={() => setTouched((prev) => ({ ...prev, fullName: true }))}
-                  className={fieldClass(Boolean((submitted || touched.fullName) && errors.fullName))}
+                  className={fieldClass(
+                    Boolean((submitted || touched.fullName) && errors.fullName)
+                  )}
                   placeholder="Your full name"
                 />
                 {(submitted || touched.fullName) && errors.fullName ? (
@@ -138,7 +151,9 @@ export default function ContactPage() {
                   id="email"
                   type="email"
                   value={values.email}
-                  onChange={(event) => setValues((prev) => ({ ...prev, email: event.target.value }))}
+                  onChange={(event) =>
+                    setValues((prev) => ({ ...prev, email: event.target.value }))
+                  }
                   onBlur={() => setTouched((prev) => ({ ...prev, email: true }))}
                   className={fieldClass(Boolean((submitted || touched.email) && errors.email))}
                   placeholder="your@email.com"
@@ -149,13 +164,18 @@ export default function ContactPage() {
               </div>
 
               <div>
-                <label htmlFor="subject" className="mb-1 block text-sm font-semibold text-slate-800">
+                <label
+                  htmlFor="subject"
+                  className="mb-1 block text-sm font-semibold text-slate-800"
+                >
                   Subject
                 </label>
                 <input
                   id="subject"
                   value={values.subject}
-                  onChange={(event) => setValues((prev) => ({ ...prev, subject: event.target.value }))}
+                  onChange={(event) =>
+                    setValues((prev) => ({ ...prev, subject: event.target.value }))
+                  }
                   onBlur={() => setTouched((prev) => ({ ...prev, subject: true }))}
                   className={fieldClass(Boolean((submitted || touched.subject) && errors.subject))}
                   placeholder="How can we help?"
@@ -166,14 +186,19 @@ export default function ContactPage() {
               </div>
 
               <div>
-                <label htmlFor="message" className="mb-1 block text-sm font-semibold text-slate-800">
+                <label
+                  htmlFor="message"
+                  className="mb-1 block text-sm font-semibold text-slate-800"
+                >
                   Message
                 </label>
                 <textarea
                   id="message"
                   rows={5}
                   value={values.message}
-                  onChange={(event) => setValues((prev) => ({ ...prev, message: event.target.value }))}
+                  onChange={(event) =>
+                    setValues((prev) => ({ ...prev, message: event.target.value }))
+                  }
                   onBlur={() => setTouched((prev) => ({ ...prev, message: true }))}
                   className={fieldClass(Boolean((submitted || touched.message) && errors.message))}
                   placeholder="Tell us more about your request"
@@ -221,7 +246,8 @@ export default function ContactPage() {
                 San Francisco, CA
               </li>
               <li id="status">
-                <span className="font-semibold text-slate-900">Status:</span> All systems operational
+                <span className="font-semibold text-slate-900">Status:</span> All systems
+                operational
               </li>
             </ul>
 
@@ -241,7 +267,9 @@ export default function ContactPage() {
 
       <section className="container-main py-10 sm:py-12">
         <div className="mx-auto max-w-4xl">
-          <h2 className="text-center text-3xl font-bold text-slate-900 sm:text-4xl">Frequently Asked Questions</h2>
+          <h2 className="text-center text-3xl font-bold text-slate-900 sm:text-4xl">
+            Frequently Asked Questions
+          </h2>
           <div className="mt-6 space-y-3">
             {faqItems.map((item, index) => {
               const isOpen = openFaq === index;
@@ -272,7 +300,9 @@ export default function ContactPage() {
                     )}
                   >
                     <div className="overflow-hidden">
-                      <p className="px-5 pb-5 text-sm leading-relaxed text-slate-600">{item.answer}</p>
+                      <p className="px-5 pb-5 text-sm leading-relaxed text-slate-600">
+                        {item.answer}
+                      </p>
                     </div>
                   </div>
                 </div>

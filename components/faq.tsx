@@ -14,11 +14,13 @@ const faqs = [
   },
   {
     question: "How long does delivery take?",
-    answer: "Delivery times vary by seller and location, but most orders arrive within 3-7 business days."
+    answer:
+      "Delivery times vary by seller and location, but most orders arrive within 3-7 business days."
   },
   {
     question: "Can I cancel my subscription anytime?",
-    answer: "Yes, you can cancel your plan from account settings, and it remains active through the billing period."
+    answer:
+      "Yes, you can cancel your plan from account settings, and it remains active through the billing period."
   },
   {
     question: "Is my data secure?",
@@ -30,7 +32,8 @@ const faqs = [
   },
   {
     question: "What's the refund policy?",
-    answer: "Refund eligibility depends on plan type and usage. See our policy page for full details."
+    answer:
+      "Refund eligibility depends on plan type and usage. See our policy page for full details."
   },
   {
     question: "Can I change my plan?",
@@ -60,50 +63,54 @@ export default function Faq() {
           <p className="inline-flex rounded-full bg-[#e8f8f3] px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[#008080]">
             Support
           </p>
-          <h2 className="mt-3 text-[28px] font-bold text-slate-900 sm:text-[34px]">Got Questions?</h2>
+          <h2 className="mt-3 text-[28px] font-bold text-slate-900 sm:text-[34px]">
+            Got Questions?
+          </h2>
           <p className="mt-2 text-sm text-slate-500 sm:text-base">
             Everything you need to know before launching and growing your storefront.
           </p>
         </div>
 
         <div className="mx-auto mt-8 max-w-4xl">
-        {faqs.map((faq, index) => {
-          const isOpen = openIndex === index;
-          return (
-            <div
-              key={faq.question}
-              className="mb-3 overflow-hidden rounded-2xl border border-[#e6eaea] bg-white shadow-sm transition-all duration-300 hover:-translate-y-[2px] hover:shadow-md"
-            >
-              <button
-                type="button"
-                onClick={() => toggleItem(index)}
-                className="flex w-full items-center justify-between gap-4 p-5 text-left"
-                aria-expanded={isOpen}
+          {faqs.map((faq, index) => {
+            const isOpen = openIndex === index;
+            return (
+              <div
+                key={faq.question}
+                className="mb-3 overflow-hidden rounded-2xl border border-[#e6eaea] bg-white shadow-sm transition-all duration-300 hover:-translate-y-[2px] hover:shadow-md"
               >
-                <span className="text-[16px] font-semibold text-slate-800">{faq.question}</span>
-                <span
+                <button
+                  type="button"
+                  onClick={() => toggleItem(index)}
+                  className="flex w-full items-center justify-between gap-4 p-5 text-left"
+                  aria-expanded={isOpen}
+                >
+                  <span className="text-[16px] font-semibold text-slate-800">{faq.question}</span>
+                  <span
+                    className={cn(
+                      "inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#dbe7e7] bg-[#f7fbfb] text-[#008080] transition-all duration-300 ease-in-out",
+                      isOpen ? "rotate-180 border-[#008080]/40 bg-[#e8f8f3]" : "rotate-0"
+                    )}
+                  >
+                    ▼
+                  </span>
+                </button>
+
+                <div
                   className={cn(
-                    "inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#dbe7e7] bg-[#f7fbfb] text-[#008080] transition-all duration-300 ease-in-out",
-                    isOpen ? "rotate-180 border-[#008080]/40 bg-[#e8f8f3]" : "rotate-0"
+                    "grid transition-all duration-300 ease-in-out",
+                    isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
                   )}
                 >
-                  ▼
-                </span>
-              </button>
-
-              <div
-                className={cn(
-                  "grid transition-all duration-300 ease-in-out",
-                  isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
-                )}
-              >
-                <div className="overflow-hidden">
-                  <p className="px-5 pb-5 text-[14px] leading-relaxed text-slate-600">{faq.answer}</p>
+                  <div className="overflow-hidden">
+                    <p className="px-5 pb-5 text-[14px] leading-relaxed text-slate-600">
+                      {faq.answer}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
         </div>
       </div>
     </section>

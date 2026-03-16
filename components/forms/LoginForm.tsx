@@ -71,7 +71,10 @@ export function LoginForm() {
           <label htmlFor="password" className="block text-sm font-medium text-slate-700">
             Password
           </label>
-          <Link href="/auth/reset-password" className="text-sm font-medium text-brand-600 hover:text-brand-700">
+          <Link
+            href="/auth/reset-password"
+            className="text-sm font-medium text-brand-600 hover:text-brand-700"
+          >
             Forgot password?
           </Link>
         </div>

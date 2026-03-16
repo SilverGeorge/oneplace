@@ -72,7 +72,7 @@ export default function PopularBrands() {
             </div>
             <div className="p-4">
               <h3 className="text-[16px] font-bold text-[#1a1a1a]">{brand.name}</h3>
-              <p className="mt-2 overflow-hidden text-[14px] font-normal text-[#666666] [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">
+              <p className="mt-2 overflow-hidden text-[14px] font-normal text-[#666666] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] [display:-webkit-box]">
                 {brand.description}
               </p>
               <button className="mt-4 w-full rounded-lg bg-[#008080] px-4 py-3 text-[14px] font-semibold text-white transition duration-300 hover:scale-105 hover:shadow-lg">

@@ -124,9 +124,7 @@ export default function Navbar() {
       <div
         className={cn(
           "fixed inset-0 z-40 bg-slate-900/40 transition-opacity duration-300 md:hidden",
-          mobileOpen
-            ? "pointer-events-auto opacity-100"
-            : "pointer-events-none opacity-0"
+          mobileOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
         )}
         onClick={() => setMobileOpen(false)}
         aria-hidden="true"
